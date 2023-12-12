@@ -3,7 +3,21 @@ const API_KEY = "5adc4078b4c291a05ca4fc8cfc68d770";
 const searchInput = document.querySelector("input");
 const searchButton = document.querySelector("button");
 const weatherContainer = document.getElementById("weather");
+const forecastContainer = document.getElementById("forecast");
 const locationIcon = document.getElementById("location");
+const DAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+const getWeekDay = (date) => {
+  return DAYS[new Date(date * 1000).getDay()];
+};
 const getCurrentWeatherByName = async (city) => {
   const url = `${BASE_URL}/weather?q=${city}&appid=${API_KEY}&units=metric`;
   const response = await fetch(url);
@@ -16,6 +30,12 @@ const getCurrentWeatherByCoordinates = async (lat, lon) => {
   const json = await response.json();
   return json;
 };
+const getForecastWeatherByName = async (city) => {
+  const url = `${BASE_URL}/forecast?q=${city}&appid=${API_KEY}&units=metric`;
+  const response = await fetch(url);
+  const json = await response.json();
+  return json;
+};
 const searchHandler = async () => {
   const cityName = searchInput.value;
   if (!cityName) {
@@ -23,6 +43,8 @@ const searchHandler = async () => {
   }
   const currentData = await getCurrentWeatherByName(cityName);
   renderCurrentWeather(currentData);
+  const forecastData = await getForecastWeatherByName(cityName);
+  renderForecastWeather(forecastData);
 };
 const renderCurrentWeather = (data) => {
   const weatherJSX = `
@@ -41,10 +63,27 @@ const renderCurrentWeather = (data) => {
     `;
   weatherContainer.innerHTML = weatherJSX;
 };
+const renderForecastWeather = (data) => {
+  forecastContainer.innerHTML = "";
+  data = data.list.filter((obj) => obj.dt_txt.endsWith("12:00:00"));
+  data.forEach((i) => {
+    const forecastJSX = `
+    <div>
+    <img alt="weather icon" src="https://api.openweathermap.org/img/w/${
+      i.weather[0].icon
+    }.png">
+    <h3>${getWeekDay(i.dt)}</h3>
+    <p>${Math.round(i.main.temp)}°C</p>
+    <span>${i.weather[0].main}</span>
+    </div>
+    `;
+    forecastContainer.innerHTML += forecastJSX;
+  });
+};
 const positionCallback = async (position) => {
   const { latitude, longitude } = position.coord;
   const currentData = getCurrentWeatherByCoordinates(latitude, longitude);
-  renderCurrentWeather(currentData)
+  renderCurrentWeather(currentData);
 };
 const errorCallback = (error) => {
   alert(error.message);
