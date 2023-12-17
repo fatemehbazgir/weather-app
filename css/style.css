@@ -18,12 +18,15 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 100px 10px 200px;
+    padding: 100px 10px 210px;
     border-radius: 0 0 40px 40px;
-    background: linear-gradient(13deg,
+    /* background: linear-gradient(13deg,
     var(--color-primary)47%,
     var(--color-secondary)100%
-    );
+    ); */
+    background-image: url("../img/background.jpg");
+    background-size: cover;
+    opacity: 0.9;
     box-shadow: var(--color-secondary) 0 20px 100px 0;
 }
 #location{
@@ -68,7 +71,8 @@ body{
     margin: auto;
     width: 500px;
     min-height: 200px;
-    background-color: #fff;
+    background-color: #d9eff4;
+    opacity: 0.9;
     position: relative;
     bottom:80px;
     margin-bottom: 50px;
